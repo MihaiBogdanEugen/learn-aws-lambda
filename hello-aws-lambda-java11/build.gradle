@@ -1,0 +1,53 @@
+plugins {
+    id "java"
+    id "application"
+    id "com.github.johnrengelman.shadow" version "${shadowPluginVersion}"
+    id "com.github.ben-manes.versions" version "${versionsPluginVersion}"
+}
+
+// java plugin configuration
+java.sourceCompatibility = JavaVersion.VERSION_11
+java.targetCompatibility = JavaVersion.VERSION_11
+
+// application plugin configuration
+application.mainClassName = "de.mbe.tutorials.aws.lambda.FnHello"
+distZip.enabled = false
+distTar.enabled = false
+
+// shadow plugin configuration
+shadowDistZip.enabled = false
+shadowDistTar.enabled = false
+shadowJar.setArchiveVersion("")
+shadowJar {
+    archiveBaseName = "hello-aws-lambda-java11"
+    archiveClassifier = ""
+    archiveVersion = ""
+}
+
+group "de.mbe.tutorials.aws.lambda"
+version "1.0.0"
+
+tasks.withType(JavaCompile) {
+    options.encoding = "UTF-8"
+}
+
+wrapper.gradleVersion = "${gradleVersion}"
+wrapper.distributionType = Wrapper.DistributionType.ALL
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation "com.amazonaws:aws-lambda-java-core:${awsLambdaJavaCoreDependencyVersion}"
+    implementation "io.symphonia:lambda-logging:${lambdaLoggingDependencyVersion}:no-config"
+    implementation "com.fasterxml.jackson.core:jackson-databind:${jacksonDependencyVersion}"
+    testImplementation "org.junit.jupiter:junit-jupiter:${junitJupiterDependencyVersion}"
+}
+
+test {
+    useJUnitPlatform()
+    testLogging {
+        events "passed", "skipped", "failed"
+    }
+}
