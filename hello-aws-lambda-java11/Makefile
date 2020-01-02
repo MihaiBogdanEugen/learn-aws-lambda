@@ -49,7 +49,7 @@ ifeq ($(BUILD_AUTOMATION_SYSTEM), Maven)
 		--function-name ${FUNCTION_NAME} \
 		--zip-file fileb://target/${FUNCTION_NAME}.jar \
 		--environment Variables={BUILD_AUTOMATION_SYSTEM=$(BUILD_AUTOMATION_SYSTEM)} \
-		--role arn:aws:iam::$(AWS_ACCOUNT_ID):role/$(AWS_ROLE)  \
+		--role $(AWS_ROLE_ARN)  \
 		--handler de.mbe.tutorials.aws.lambda.FnHelloHandlerWithPOJOs::handleRequest \
 		--runtime java11 \
 		--timeout 15 \
@@ -59,7 +59,7 @@ else
 		--function-name ${FUNCTION_NAME} \
 		--zip-file fileb://build/libs/${FUNCTION_NAME}.jar \
 		--environment Variables={BUILD_AUTOMATION_SYSTEM=$(BUILD_AUTOMATION_SYSTEM)} \
-		--role arn:aws:iam::$(AWS_ACCOUNT_ID):role/$(AWS_ROLE)  \
+		--role $(AWS_ROLE_ARN)  \
 		--handler de.mbe.tutorials.aws.lambda.FnHelloHandlerWithPOJOs::handleRequest \
 		--runtime java11 \
 		--timeout 15 \
@@ -68,13 +68,13 @@ endif
 
 .PHONY: create-lambda-streams
 ## create-lambda-streams: Create the Lambda function using the Streams aproach - must pass along `AWS_ACCOUNT_ID` and `AWS_ROLE`
-create-lambda-streams: check-aws-cli check-aws-account-id check-aws-role package
+create-lambda-streams: check-aws-cli check-aws-role-arn package
 ifeq ($(BUILD_AUTOMATION_SYSTEM), Maven)
 	aws lambda create-function \
 		--function-name ${FUNCTION_NAME} \
 		--zip-file fileb://target/${FUNCTION_NAME}.jar \
 		--environment Variables={BUILD_AUTOMATION_SYSTEM=$(BUILD_AUTOMATION_SYSTEM)} \
-		--role arn:aws:iam::$(AWS_ACCOUNT_ID):role/$(AWS_ROLE)  \
+		--role $(AWS_ROLE_ARN)  \
 		--handler de.mbe.tutorials.aws.lambda.FnHelloHandlerWithStreams::handleRequest \
 		--runtime java11 \
 		--timeout 15 \
@@ -84,7 +84,7 @@ else
 		--function-name ${FUNCTION_NAME} \
 		--zip-file fileb://build/libs/${FUNCTION_NAME}.jar \
 		--environment Variables={BUILD_AUTOMATION_SYSTEM=$(BUILD_AUTOMATION_SYSTEM)} \
-		--role arn:aws:iam::$(AWS_ACCOUNT_ID):role/$(AWS_ROLE)  \
+		--role $(AWS_ROLE_ARN)  \
 		--handler de.mbe.tutorials.aws.lambda.FnHelloHandlerWithStreams::handleRequest \
 		--runtime java11 \
 		--timeout 15 \
@@ -105,7 +105,7 @@ else
 endif
 
 .PHONY: test-lambda
-## test-lambda: Run a simple test by invoking the function wiht a predefined input
+## test-lambda: Run a simple test by invoking the function with a predefined input
 test-lambda: check-aws-cli
 	aws lambda invoke \
 		--function-name ${FUNCTION_NAME} \
@@ -113,17 +113,17 @@ test-lambda: check-aws-cli
     test_response.json && cat test_response.json && rm -f test_response.json
 
 .PHONY: delete-lambda
-## delete-lambda: Deletes the Lambda function
+## delete-lambda: Delete the Lambda function
 delete-lambda: check-aws-cli
 	aws lambda delete-function --function-name ${FUNCTION_NAME}
 
 .PHONY: get-lambda
-## get-lambda: Returns information about the function or function version, with a link to download the deployment package valid for 10 mins
+## get-lambda: Return information about the function or function version, with a link to download the deployment package valid for 10 minutes
 get-lambda: check-aws-cli
 	aws lambda get-function --function-name ${FUNCTION_NAME}
 
 .PHONY: list-lambda
-## list-lambda: Returns a list of Lambda functions, with the version-specific configuration of each
+## list-lambda: Return a list of Lambda functions, with the version-specific configuration of each
 list-lambda: check-aws-cli
 	aws lambda list-functions
 
@@ -134,16 +134,11 @@ ifeq (, $(shell which aws))
 	$(error "AWS CLI is NOT installed correctly. More information: https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-install.html")
 endif
 
-check-aws-account-id:
-## check-aws-account-id: Ensure the AWS_ACCOUNT_ID environment variable is defined
-ifndef AWS_ACCOUNT_ID
-	$(error "AWS_ACCOUNT_ID is undefined")
-endif
 
-check-aws-role:
-## check-aws-role: Ensure the AWS_ROLE environment variable is defined
-ifndef AWS_ROLE
-	$(error "AWS_ROLE is undefined")
+check-aws-role-arn:
+## check-aws-role-arn: Ensure the AWS_ROLE_ARN environment variable is defined
+ifndef AWS_ROLE_ARN
+	$(error "AWS_ROLE_ARN is undefined")
 endif
 
 .PHONY: help
