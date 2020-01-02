@@ -107,7 +107,11 @@ make help
 ## Walkthrough
 
 ### Setup
-When it comes to the build automation system, there are 2 major options - [Gradle](https://github.com/MihaiBogdanEugen/learn-aws-lambda/tree/master/hello-aws-lambda-java11#gradle) or [Maven](https://github.com/MihaiBogdanEugen/learn-aws-lambda/tree/master/hello-aws-lambda-java11#maven), both of them being perfectly identical from the end result perspective. Nevertheless, any other build automation system capable of outputting a fat-jar can be used.
+When it comes to the build automation system, there are 2 major options:
+- [Gradle](https://github.com/MihaiBogdanEugen/learn-aws-lambda/tree/master/hello-aws-lambda-java11#gradle) or 
+- [Maven](https://github.com/MihaiBogdanEugen/learn-aws-lambda/tree/master/hello-aws-lambda-java11#maven).
+
+Both of them being perfectly identical from the end result perspective. Nevertheless, any other build automation system capable of outputting a fat-jar can be used.
 
 By default, the Makefile is using the Maven setup.
 
@@ -277,3 +281,125 @@ test {
 </dependency>
 ```
 ### Handler
+When it comes to the handler function, there are 2 interfaces one can implement:
+- [RequestHandler](https://github.com/aws/aws-lambda-java-libs/blob/master/aws-lambda-java-core/src/main/java/com/amazonaws/services/lambda/runtime/RequestHandler.java) - This is the POJOs approach, which implies that the AWS Lambda runtime will `serialize/deserialize` the invocation input String to the predefined Request POJO and then the Response POJO to an output String 
+- [RequestStreamHandler](https://github.com/aws/aws-lambda-java-libs/blob/master/aws-lambda-java-core/src/main/java/com/amazonaws/services/lambda/runtime/RequestStreamHandler.java) - This is the Streams approach, which implies no conversion at all, one has access to the raw InputStream and OutputStream. If the business logic can work natively with streams, this approach might be more effective, otherwise converting to POJOs and back might prove too costly.
+
+By default, the Makefile is using the POJOs setup.
+
+#### POJO approach based on implementing the [RequestHandler](https://github.com/aws/aws-lambda-java-libs/blob/master/aws-lambda-java-core/src/main/java/com/amazonaws/services/lambda/runtime/RequestHandler.java) interface:
+```java
+public class FnHelloHandlerWithPOJOs implements RequestHandler<Request, Response> {
+
+    @Override
+    public Response handleRequest(Request request, Context context) { }
+
+}
+```
+
+#### Streams approach based on implementing the [RequestStreamHandler](https://github.com/aws/aws-lambda-java-libs/blob/master/aws-lambda-java-core/src/main/java/com/amazonaws/services/lambda/runtime/RequestStreamHandler.java) interface:
+```java
+public class FnHelloHandlerWithStreams implements RequestStreamHandler {
+
+    @Override
+    public void handleRequest(InputStream input, OutputStream output, Context context) throws IOException {
+
+    }
+}
+```
+
+### Execution Context
+- The `STATIC_RANDOM` is a static field, its value will *NOT* change during subsequent invocations:
+```java
+public class FnHello implements RequestHandler<Request, Response> {
+    private static final double STATIC_RANDOM = Math.random();
+}
+```
+- The `constructorRandom` is initialized in the class' constructor, its value will *NOT* change during subsequent invocations:
+```java
+public class FnHello implements RequestHandler<FnHello.Request, FnHello.Response> {
+
+    private final double constructorRandom;
+
+    public FnHello() {
+        this.constructorRandom = Math.random();
+    }
+}
+```
+- The `invocationRandom` is initialized during each invocation, its value will therefore always change:
+```java
+public class FnHello implements RequestHandler<Request, Response> {
+
+    @Override
+    public Response handleRequest(Request request, Context context) {
+        final double invocationRandom = Math.random();
+    }
+}
+```
+
+### Function Context
+The [context](https://github.com/aws/aws-lambda-java-libs/blob/master/aws-lambda-java-core/src/main/java/com/amazonaws/services/lambda/runtime/Context.java) object provides access to the function's invocation context:
+```java
+public class FnHello implements RequestHandler<Request, Response> {
+
+    @Override
+    public Response handleRequest(Request request, Context context) {
+
+        LOGGER.info("{} called {} has {} seconds to live",
+                System.getenv("AWS_EXECUTION_ENV"),
+                context.getFunctionName(),
+                context.getRemainingTimeInMillis() / 1000);
+    }
+}
+```
+
+### Reserved Environment Variables
+There are [reserved environment variables](https://docs.aws.amazon.com/lambda/latest/dg/lambda-environment-variables.html) available to Lambda functions. 
+The previous code sample shows the usage of `AWS_EXECUTION_ENV` value.
+
+### Custom Environment Variables
+Custom environment variables can be used if they are passed along when the AWS Lambda function is created:
+```shell
+aws lambda create-function \
+    (...)       
+    --environment Variables={BUILD_AUTOMATION_SYSTEM=Gradle} \
+    (...)
+```
+
+### Code Separation
+- tbd
+
+### Logging
+Use SL4J/logback logging:
+```java
+public class FnHello implements RequestHandler<Request, Response> {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(FnHello.class);
+
+    @Override
+    public Response handleRequest(Request request, Context context) {
+        LOGGER.info("..."); 
+    }
+}
+```
+If you plan to modify the default logback configuration, set the classifier to `no-config`.
+
+Afterwards, add the `logback.xml` file in `src/main/resources`:
+```xml
+<configuration>
+    <appender name="STDOUT" class="io.symphonia.lambda.logging.DefaultConsoleAppender">
+        <encoder>
+            <pattern>[%d{yyyy-MM-dd HH:mm:ss.SSS}] %X{AWSRequestId:-" + NO_REQUEST_ID + "} %.-6level %logger{5} - %msg \r%replace(%ex){'\n','\r'}%nopex%n</pattern>
+        </encoder>
+    </appender>
+    <root level="info">
+        <appender-ref ref="STDOUT" />
+    </root>
+</configuration>
+```
+
+### Error Handling
+- tbd
+
+### Tracing
+- tbd
