@@ -1,7 +1,7 @@
 # AWS Lambda using Java with Java11 Runtime
 
 This is an over-engineered "hello world" style AWS Lambda created using Java11 showing:
-- deployment package prepared using either Gradle or Maven
+- deployment package prepared using either [Gradle](https://github.com/MihaiBogdanEugen/learn-aws-lambda/tree/master/hello-aws-lambda-java11#gradle) or [Maven](https://github.com/MihaiBogdanEugen/learn-aws-lambda/tree/master/hello-aws-lambda-java11#maven)
 - handler function using either POJOs or Streams
 - execution context
 - function context
@@ -11,7 +11,13 @@ This is an over-engineered "hello world" style AWS Lambda created using Java11 s
 - logging using SLF4J and logback
 - error handling
 - tracing using AWS X-Ray
-- useful AWS CLI commands for [creating](https://github.com/MihaiBogdanEugen/learn-aws-lambda/tree/master/hello-aws-lambda-java11#test-function), [updating](https://github.com/MihaiBogdanEugen/learn-aws-lambda/tree/master/hello-aws-lambda-java11#test-function), [invoking](https://github.com/MihaiBogdanEugen/learn-aws-lambda/tree/master/hello-aws-lambda-java11#test-function), [getting](https://github.com/MihaiBogdanEugen/learn-aws-lambda/tree/master/hello-aws-lambda-java11#test-function), [listing](https://github.com/MihaiBogdanEugen/learn-aws-lambda/tree/master/hello-aws-lambda-java11#test-function) and [deleting](https://github.com/MihaiBogdanEugen/learn-aws-lambda/tree/master/hello-aws-lambda-java11#test-function) AWS Lambda resources
+- useful AWS CLI commands for
+  - [creating](https://github.com/MihaiBogdanEugen/learn-aws-lambda/tree/master/hello-aws-lambda-java11#create-function) AWS Lambda resources
+  - [updating](https://github.com/MihaiBogdanEugen/learn-aws-lambda/tree/master/hello-aws-lambda-java11#update-function) AWS Lambda resources
+  - [invoking](https://github.com/MihaiBogdanEugen/learn-aws-lambda/tree/master/hello-aws-lambda-java11#test-function) AWS Lambda resources
+  - [getting](https://github.com/MihaiBogdanEugen/learn-aws-lambda/tree/master/hello-aws-lambda-java11#get-function) AWS Lambda resources
+  - [listing](https://github.com/MihaiBogdanEugen/learn-aws-lambda/tree/master/hello-aws-lambda-java11#list-function) AWS Lambda resources
+  - [deleting](https://github.com/MihaiBogdanEugen/learn-aws-lambda/tree/master/hello-aws-lambda-java11#delete-function) AWS Lambda resources
 
 ## Requirements
 - [AWS Command Line Interface](https://aws.amazon.com/cli/)
@@ -101,7 +107,7 @@ make help
 ## Walkthrough
 
 ### Setup
-When it comes to the build automation system, there are 2 major options - Gradle or Maven, both of them being perfectly identical from the end result perspective. Nevertheless, any other build automation system capable of outputting a fat-jar can be used.
+When it comes to the build automation system, there are 2 major options - [Gradle](https://github.com/MihaiBogdanEugen/learn-aws-lambda/tree/master/hello-aws-lambda-java11#gradle) or [Maven](https://github.com/MihaiBogdanEugen/learn-aws-lambda/tree/master/hello-aws-lambda-java11#maven), both of them being perfectly identical from the end result perspective. Nevertheless, any other build automation system capable of outputting a fat-jar can be used.
 
 By default, the Makefile is using the Maven setup.
 
@@ -135,8 +141,7 @@ shadowJar {
     archiveVersion = ""
 }
 ```
-- Dependencies:
-  - [com.amazonaws.aws-lambda-java-core](https://github.com/aws/aws-lambda-java-libs/tree/master/aws-lambda-java-core) - AWS Lambda Java support library:
+- Dependency [com.amazonaws.aws-lambda-java-core](https://github.com/aws/aws-lambda-java-libs/tree/master/aws-lambda-java-core) - AWS Lambda Java support library:
 ```properties
 awsLambdaJavaCoreDependencyVersion=1.2.0
 ```
@@ -145,7 +150,7 @@ dependencies {
     implementation "com.amazonaws:aws-lambda-java-core:${awsLambdaJavaCoreDependencyVersion}"
 }
 ```
-  - [io.symphonia.lambda-logging](https://github.com/symphoniacloud/lambda-monitoring/tree/master/lambda-logging) - Better logging for AWS Lambda Java using SLF4J and logback:
+- Dependency [io.symphonia.lambda-logging](https://github.com/symphoniacloud/lambda-monitoring/tree/master/lambda-logging) - Better logging for AWS Lambda Java using SLF4J and logback:
 ```properties
 lambdaLoggingDependencyVersion=1.0.3
 ```
@@ -154,7 +159,7 @@ dependencies {
     implementation "io.symphonia:lambda-logging:${lambdaLoggingDependencyVersion}:no-config"
 }  
 ```
-  - [com.fasterxml.jackson.core.jackson-databind](https://github.com/FasterXML/jackson-databind) - Used only in the handler scenario using Streams
+- Dependency [com.fasterxml.jackson.core.jackson-databind](https://github.com/FasterXML/jackson-databind) - Used only in the handler scenario using Streams:
 ```properties
 jacksonDependencyVersion=2.10.1
 ```
@@ -163,8 +168,7 @@ dependencies {
     implementation "com.fasterxml.jackson.core:jackson-databind:${jacksonDependencyVersion}"
 }  
 ```
-- Tests using [JUnit5](https://github.com/junit-team/junit5):
-  - [org.junit.jupiter.junit-jupiter](https://github.com/junit-team/junit5/tree/master/junit-jupiter-api)
+- Test dependency [org.junit.jupiter.junit-jupiter](https://github.com/junit-team/junit5/tree/master/junit-jupiter-api):
 ```properties
 junitJupiterDependencyVersion=5.5.2
 ```
@@ -226,8 +230,7 @@ test {
     </executions>
 </plugin>
 ```
-- Dependencies:
-  - [com.amazonaws.aws-lambda-java-core](https://github.com/aws/aws-lambda-java-libs/tree/master/aws-lambda-java-core) - AWS Lambda Java support library:
+- Dependency [com.amazonaws.aws-lambda-java-core](https://github.com/aws/aws-lambda-java-libs/tree/master/aws-lambda-java-core) - AWS Lambda Java support library:
 ```xml
 <aws-lambda-java-core.version>1.2.0</aws-lambda-java-core.version>
 ```
@@ -238,7 +241,7 @@ test {
     <version>${aws-lambda-java-core.version}</version>
 </dependency>
 ```
-  - [io.symphonia.lambda-logging](https://github.com/symphoniacloud/lambda-monitoring/tree/master/lambda-logging) - Better logging for AWS Lambda Java using SLF4J and logback:
+- Dependency [io.symphonia.lambda-logging](https://github.com/symphoniacloud/lambda-monitoring/tree/master/lambda-logging) - Better logging for AWS Lambda Java using SLF4J and logback:
 ```xml
 <lambda-logging.version>1.0.3</lambda-logging.version>
 ```
@@ -250,7 +253,7 @@ test {
     <classifier>no-config</classifier>
 </dependency>
 ```
-  - [com.fasterxml.jackson.core.jackson-databind](https://github.com/FasterXML/jackson-databind) - Used only in the handler scenario using Streams
+- Dependency [com.fasterxml.jackson.core.jackson-databind](https://github.com/FasterXML/jackson-databind) - Used only in the handler scenario using Streams:
 ```xml
 <jackson.version>2.10.1</jackson.version>
 ```
@@ -261,8 +264,7 @@ test {
     <version>${jackson.version}</version>
 </dependency>
 ```
-- Tests using [JUnit5](https://github.com/junit-team/junit5):
-  - [org.junit.jupiter.junit-jupiter](https://github.com/junit-team/junit5/tree/master/junit-jupiter-api)
+- Test dependency [org.junit.jupiter.junit-jupiter](https://github.com/junit-team/junit5/tree/master/junit-jupiter-api):
 ```xml
 <junit-jupiter.version>5.5.2</junit-jupiter.version>
 ```

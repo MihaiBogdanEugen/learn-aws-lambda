@@ -7,7 +7,7 @@ Learn how to use AWS Lambda to create Serverless spplications
 - [AWS Command Line Interface](https://aws.amazon.com/cli/) installed and properly set up
 
 ## Getting Started with AWS Lambda
-- [AWS Lambda using Java with Java11 Runtime](hello-aws-lambda-java11/) using [Maven](hello-aws-lambda-java11/pon.xml) or [Gradle](hello-aws-lambda-java11/build.gradle)
+- [AWS Lambda using Java with Java11 Runtime](hello-aws-lambda-java11/) using either [Gradle](https://github.com/MihaiBogdanEugen/learn-aws-lambda/tree/master/hello-aws-lambda-java11#gradle) or [Maven](https://github.com/MihaiBogdanEugen/learn-aws-lambda/tree/master/hello-aws-lambda-java11#maven)
 
 ## AWS Serverless Application Model
 - tbd
