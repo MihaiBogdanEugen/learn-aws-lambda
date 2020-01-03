@@ -1,6 +1,6 @@
 # AWS Lambda using Java with Java11 Runtime
 
-This is an over-engineered "hello world" style AWS Lambda created using Java11 showing:
+This is an *over-engineered* "hello world" style AWS Lambda created using Java11 showing:
 - deployment package prepared using either [Gradle](https://github.com/MihaiBogdanEugen/learn-aws-lambda/tree/master/hello-aws-lambda-java11#gradle) or [Maven](https://github.com/MihaiBogdanEugen/learn-aws-lambda/tree/master/hello-aws-lambda-java11#maven)
 - handler function using either POJOs or Streams
 - execution context
@@ -59,8 +59,9 @@ aws lambda create-function \
     --role $(AWS_ROLE_ARN)  \
     --handler de.mbe.tutorials.aws.lambda.FnHelloHandlerWithPOJOs::handleRequest \
     --runtime java11 \
-    --timeout 15 \
-    --memory-size 256
+    --timeout 30 \
+    --memory-size 256 \
+    --tracing-config Mode=Active
 ```
 
 ### Update Function
@@ -154,6 +155,15 @@ dependencies {
     implementation "com.amazonaws:aws-lambda-java-core:${awsLambdaJavaCoreDependencyVersion}"
 }
 ```
+- Dependency [com.amazonaws.aws-xray-recorder-sdk-core](https://github.com/aws/aws-xray-sdk-java/tree/master/aws-xray-recorder-sdk-aws-sdk-core) - AWS X-Ray Java support library:
+```properties
+awsXrayRecorderSdkCoreDependencyVersion=2.4.0
+```
+```groovy
+dependencies {
+    implementation "com.amazonaws:aws-xray-recorder-sdk-core:${awsXrayRecorderSdkCoreDependencyVersion}"
+}
+```
 - Dependency [io.symphonia.lambda-logging](https://github.com/symphoniacloud/lambda-monitoring/tree/master/lambda-logging) - Better logging for AWS Lambda Java using SLF4J and logback:
 ```properties
 lambdaLoggingDependencyVersion=1.0.3
@@ -243,6 +253,17 @@ test {
     <groupId>com.amazonaws</groupId>
     <artifactId>aws-lambda-java-core</artifactId>
     <version>${aws-lambda-java-core.version}</version>
+</dependency>
+```
+- Dependency [com.amazonaws.aws-xray-recorder-sdk-core](https://github.com/aws/aws-xray-sdk-java/tree/master/aws-xray-recorder-sdk-aws-sdk-core) - AWS X-Ray Java support library:
+```xml
+<aws-xray-recorder-sdk-core.version>2.4.0</aws-xray-recorder-sdk-core.version>
+```
+```xml
+<dependency>
+    <groupId>com.amazonaws</groupId>
+    <artifactId>aws-xray-recorder-sdk-core</artifactId>
+    <version>${aws-xray-recorder-sdk-core.version}</version>
 </dependency>
 ```
 - Dependency [io.symphonia.lambda-logging](https://github.com/symphoniacloud/lambda-monitoring/tree/master/lambda-logging) - Better logging for AWS Lambda Java using SLF4J and logback:
@@ -367,7 +388,44 @@ aws lambda create-function \
 ```
 
 ### Code Separation
-- tbd
+No matter the preference regarding the interface to implement, it is always a wise idea to separate the actual business logic code by the AWS specific handler function.
+```java
+import static de.mbe.tutorials.aws.lambda.Processor.processRequest;
+
+public class FnHello implements RequestHandler<Request, Response> {
+
+    @Override
+    public Response handleRequest(Request request, Context context) {
+
+        return processRequest(request);
+    }
+}
+```
+
+```java
+public final class Processor {
+
+    public static Response processRequest(Request request) {
+
+        return new Response();
+    }
+}
+```
+
+Therefore, unit testing the actual code becomes much easier:
+```java
+import static de.mbe.tutorials.aws.lambda.Processor.processRequest;
+
+public class ProcessorTests {
+    
+    @Test
+    void testProcessRequestNoError() {
+
+        final Response response = processRequest(request);
+        assertNotNull(response);
+    }
+}
+```
 
 ### Logging
 Use SL4J/logback logging:
@@ -382,7 +440,7 @@ public class FnHello implements RequestHandler<Request, Response> {
     }
 }
 ```
-If you plan to modify the default logback configuration, set the classifier to `no-config`.
+If you plan to modify the default logback configuration, set the classifier to `no-config` to the dependency entry.
 
 Afterwards, add the `logback.xml` file in `src/main/resources`:
 ```xml
@@ -399,7 +457,80 @@ Afterwards, add the `logback.xml` file in `src/main/resources`:
 ```
 
 ### Error Handling
-- tbd
+Pay attention to the signature of the handler functions:
+- the signature of the handler method of the [RequestHandler](https://github.com/aws/aws-lambda-java-libs/blob/master/aws-lambda-java-core/src/main/java/com/amazonaws/services/lambda/runtime/RequestHandler.java) interface does not allow any checked exceptions
+- the signature of the handler method of the [RequestStreamHandler](https://github.com/aws/aws-lambda-java-libs/blob/master/aws-lambda-java-core/src/main/java/com/amazonaws/services/lambda/runtime/RequestStreamHandler.java) interface allows only IOExceptions
 
+Apart from this, if your Lambda function code throws an exception, the AWS Lambda runtime recognizes the failure and serializes the exception information into JSON and returns it:  
+```json
+{
+  "errorMessage":"Sorry, but the caller wants to me to throw an error",
+  "errorType":"de.mbe.tutorials.aws.lambda.SimpleRuntimeException",
+  "stackTrace":[
+    "de.mbe.tutorials.aws.lambda.Processor.processRequest(Processor.java:28)",
+    "de.mbe.tutorials.aws.lambda.FnHelloHandlerWithPOJOs.handleRequest(FnHelloHandlerWithPOJOs.java:36)",
+    "java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)",
+    "java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)",
+    "java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)",
+    "java.base/java.lang.reflect.Method.invoke(Unknown Source)"
+  ]
+}
+```
 ### Tracing
-- tbd
+AWS Lambda functions can easily use X-Ray for tracing by importing the [com.amazonaws.aws-xray-recorder-sdk-core](https://github.com/aws/aws-xray-sdk-java/tree/master/aws-xray-recorder-sdk-aws-sdk-core) dependency into the function code - no other changes needed.
+For a more complex behaviour, one can use custom subsegments.
+
+- here is how to use the Subsegment Lambda Function to create a simple subsegment called `getRuntimeInfo`
+```java
+public final class Processor {
+    public static String getRuntimeInfo() {
+    
+        return AWSXRay.createSubsegment("getRuntimeInfo", () -> {
+            final RuntimeMXBean mxBean = ManagementFactory.getRuntimeMXBean();
+            return String.format("%s %s %s", mxBean.getVmVendor(), mxBean.getVmName(), mxBean.getVmVersion());
+        });
+    }
+}
+``` 
+
+- here is a more advanced subsegment usage example, showcasing how to add HTTP specific metadata:
+```java
+public final class Processor {
+    public static String getPublicIP() {
+
+        final Subsegment subsegment = AWSXRay.beginSubsegment("getPublicIP");
+        subsegment.setNamespace(Namespace.REMOTE.toString());
+
+        try {
+            final HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create("http://checkip.amazonaws.com/"))
+                    .header(TraceHeader.HEADER_KEY, getTraceHeaderKey(subsegment))
+                    .GET()
+                    .build();
+
+            subsegment.putHttp("request", getRequestInformation(request));
+
+            final HttpResponse<String> response = HttpClient.newHttpClient()
+                    .send(request, HttpResponse.BodyHandlers.ofString());
+
+            subsegment.putHttp("response", getResponseInformation(response));
+
+            return response.statusCode() / 100 == 2
+                    ? String.format("Public IP: %s", response.body().strip())
+                    : String.format("Unknown public IP, status code %d received", response.statusCode());
+
+        } catch (IOException e) {
+            subsegment.addException(e);
+            return String.format("IOException: %s", e.getMessage());
+        } catch (InterruptedException e) {
+            subsegment.addException(e);
+            return String.format("InterruptedException: %s", e.getMessage());
+        } finally {
+            subsegment.close();
+        }
+    }
+}
+```
+The previous code sample makes use of the new HttpClient included in Java11. If one wants to use the Apache HttpClient included into [org.apache.httpcomponents.httpclient](https://mvnrepository.com/artifact/org.apache.httpcomponents/httpclient) library, then AWS X-Ray offers direct integration by using the [com.amazonaws.aws-xray-recorder-sdk-aws-sdk-core](https://github.com/aws/aws-xray-sdk-java/tree/master/aws-xray-recorder-sdk-apache-http) dependency.
+
+Don't forget, in AWS Lambda, you cannot modify the sampling rate. If your function is called by an instrumented service, calls that generated requests that were sampled by that service will be recorded by Lambda. If active tracing is enabled and no tracing header is present, Lambda makes the sampling decision.

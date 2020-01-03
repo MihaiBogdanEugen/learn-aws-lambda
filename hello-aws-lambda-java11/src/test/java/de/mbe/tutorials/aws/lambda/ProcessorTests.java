@@ -4,8 +4,6 @@ import de.mbe.tutorials.aws.lambda.pojos.Request;
 import de.mbe.tutorials.aws.lambda.pojos.Response;
 import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
-
 import static de.mbe.tutorials.aws.lambda.Processor.processRequest;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -13,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class ProcessorTests {
     
     @Test
-    void testProcessRequestNoError() throws IOException, InterruptedException {
+    void testProcessRequestNoError() {
 
         final Request request = new Request("Bogdan-Eugen", "Mihai", 34);
         final Response response = processRequest(request, "anything but Apache Ant");
