@@ -43,7 +43,7 @@ endif
 
 .PHONY: create-lambda
 ## create-lambda: Create the Lambda function using the default POJOs aproach - must pass along `AWS_ACCOUNT_ID` and `AWS_ROLE`
-create-lambda: check-aws-cli check-aws-account-id check-aws-role package
+create-lambda: check-aws-cli check-aws-role-arn package
 ifeq ($(BUILD_AUTOMATION_SYSTEM), Maven)
 	aws lambda create-function \
 		--function-name ${FUNCTION_NAME} \
@@ -52,8 +52,9 @@ ifeq ($(BUILD_AUTOMATION_SYSTEM), Maven)
 		--role $(AWS_ROLE_ARN)  \
 		--handler de.mbe.tutorials.aws.lambda.FnHelloHandlerWithPOJOs::handleRequest \
 		--runtime java11 \
-		--timeout 15 \
-		--memory-size 256
+		--timeout 30 \
+		--memory-size 256 \
+		--tracing-config Mode=Active
 else
 	aws lambda create-function \
 		--function-name ${FUNCTION_NAME} \
@@ -62,8 +63,9 @@ else
 		--role $(AWS_ROLE_ARN)  \
 		--handler de.mbe.tutorials.aws.lambda.FnHelloHandlerWithPOJOs::handleRequest \
 		--runtime java11 \
-		--timeout 15 \
-		--memory-size 256
+		--timeout 30 \
+		--memory-size 256 \
+		--tracing-config Mode=Active
 endif
 
 .PHONY: create-lambda-streams
@@ -77,8 +79,9 @@ ifeq ($(BUILD_AUTOMATION_SYSTEM), Maven)
 		--role $(AWS_ROLE_ARN)  \
 		--handler de.mbe.tutorials.aws.lambda.FnHelloHandlerWithStreams::handleRequest \
 		--runtime java11 \
-		--timeout 15 \
-		--memory-size 256
+		--timeout 30 \
+		--memory-size 256 \
+		--tracing-config Mode=Active
 else
 	aws lambda create-function \
 		--function-name ${FUNCTION_NAME} \
@@ -87,8 +90,9 @@ else
 		--role $(AWS_ROLE_ARN)  \
 		--handler de.mbe.tutorials.aws.lambda.FnHelloHandlerWithStreams::handleRequest \
 		--runtime java11 \
-		--timeout 15 \
-		--memory-size 256
+		--timeout 30 \
+		--memory-size 256 \
+		--tracing-config Mode=Active
 endif
 
 .PHONY: update-lambda
@@ -111,6 +115,15 @@ test-lambda: check-aws-cli
 		--function-name ${FUNCTION_NAME} \
     	--payload '{ "firstName": "Bogdan-Eugen", "lastName": "Mihai", "age": 34 }' \
     test_response.json && cat test_response.json && rm -f test_response.json
+
+.PHONY: test-lambda-error
+## test-lambda-error: Run a simple test by invoking the function with a predefined input
+test-lambda-error: check-aws-cli
+	aws lambda invoke \
+		--function-name ${FUNCTION_NAME} \
+    	--payload '{ "firstName": "Bogdan-Eugen", "lastName": "Mihai", "age": 34, "throwError": true }' \
+    test_response.json && cat test_response.json && rm -f test_response.json
+
 
 .PHONY: delete-lambda
 ## delete-lambda: Delete the Lambda function
