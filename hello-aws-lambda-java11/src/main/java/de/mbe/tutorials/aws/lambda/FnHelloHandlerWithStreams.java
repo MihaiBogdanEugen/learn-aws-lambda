@@ -15,7 +15,6 @@ import java.io.OutputStream;
 import static de.mbe.tutorials.aws.lambda.Processor.*;
 
 public class FnHelloHandlerWithStreams implements RequestStreamHandler {
-
     private static final Logger LOGGER = LoggerFactory.getLogger(FnHelloHandlerWithStreams.class);
     private static final double STATIC_RANDOM = Math.random();
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
@@ -28,7 +27,6 @@ public class FnHelloHandlerWithStreams implements RequestStreamHandler {
 
     @Override
     public void handleRequest(final InputStream input, final OutputStream output, final Context context) throws IOException {
-
         LOGGER.info(getRuntimeInfo());
         LOGGER.info(getPublicIP());
 

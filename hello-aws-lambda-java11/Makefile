@@ -124,7 +124,6 @@ test-lambda-error: check-aws-cli
     	--payload '{ "firstName": "Bogdan-Eugen", "lastName": "Mihai", "age": 34, "throwError": true }' \
     test_response.json && cat test_response.json && rm -f test_response.json
 
-
 .PHONY: delete-lambda
 ## delete-lambda: Delete the Lambda function
 delete-lambda: check-aws-cli
@@ -146,7 +145,6 @@ check-aws-cli:
 ifeq (, $(shell which aws))
 	$(error "AWS CLI is NOT installed correctly. More information: https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-install.html")
 endif
-
 
 check-aws-role-arn:
 ## check-aws-role-arn: Ensure the AWS_ROLE_ARN environment variable is defined

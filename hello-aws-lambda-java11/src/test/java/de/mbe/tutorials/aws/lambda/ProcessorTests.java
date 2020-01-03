@@ -12,7 +12,6 @@ public class ProcessorTests {
     
     @Test
     void testProcessRequestNoError() {
-
         final Request request = new Request("Bogdan-Eugen", "Mihai", 34);
         final Response response = processRequest(request, "anything but Apache Ant");
         assertEquals("Hello Bogdan-Eugen Mihai, this is a Java11 AWS Lambda function built using anything but Apache Ant!", response.getGreeting());
@@ -21,9 +20,7 @@ public class ProcessorTests {
 
     @Test
     void testProcessRequestThrowError() {
-
         final Request request = new Request("Bogdan-Eugen", "Mihai", 34, true);
-
         assertThrows(SimpleRuntimeException.class, () -> processRequest(request, "anything but Apache Ant"));
     }
 }

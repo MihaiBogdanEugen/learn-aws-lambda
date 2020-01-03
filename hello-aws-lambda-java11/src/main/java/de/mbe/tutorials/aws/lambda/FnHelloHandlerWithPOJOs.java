@@ -10,7 +10,6 @@ import org.slf4j.LoggerFactory;
 import static de.mbe.tutorials.aws.lambda.Processor.*;
 
 public class FnHelloHandlerWithPOJOs implements RequestHandler<Request, Response> {
-
     private static final Logger LOGGER = LoggerFactory.getLogger(FnHelloHandlerWithPOJOs.class);
     private static final double STATIC_RANDOM = Math.random();
 
@@ -22,7 +21,6 @@ public class FnHelloHandlerWithPOJOs implements RequestHandler<Request, Response
 
     @Override
     public Response handleRequest(final Request request, final Context context) {
-
         LOGGER.info(getRuntimeInfo());
         LOGGER.info(getPublicIP());
 

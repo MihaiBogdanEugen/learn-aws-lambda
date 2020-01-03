@@ -1,7 +1,6 @@
 package de.mbe.tutorials.aws.lambda.pojos;
 
 public class Response {
-
     private String greeting;
     private String result;
 

@@ -7,6 +7,8 @@ import com.amazonaws.xray.entities.Subsegment;
 import com.amazonaws.xray.entities.TraceHeader;
 import de.mbe.tutorials.aws.lambda.pojos.Request;
 import de.mbe.tutorials.aws.lambda.pojos.Response;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
@@ -19,9 +21,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 public final class Processor {
+    private static final Logger LOGGER = LoggerFactory.getLogger(Processor.class);
 
     public static Response processRequest(final Request request, final String buildAutomationSystem) {
-
         if (request.isThrowError()) {
             throw new SimpleRuntimeException("Sorry, but the caller wants to me to throw an error");
         }
@@ -36,7 +38,6 @@ public final class Processor {
     }
 
     public static String getRuntimeInfo() {
-
         return AWSXRay.createSubsegment("getRuntimeInfo", () -> {
             final RuntimeMXBean mxBean = ManagementFactory.getRuntimeMXBean();
             return String.format("%s %s %s", mxBean.getVmVendor(), mxBean.getVmName(), mxBean.getVmVersion());
@@ -44,7 +45,6 @@ public final class Processor {
     }
 
     public static String getPublicIP() {
-
         final Subsegment subsegment = AWSXRay.beginSubsegment("getPublicIP");
         subsegment.setNamespace(Namespace.REMOTE.toString());
 
@@ -68,9 +68,11 @@ public final class Processor {
 
         } catch (IOException e) {
             subsegment.addException(e);
+            LOGGER.error(e.getMessage(), e);
             return String.format("IOException: %s", e.getMessage());
         } catch (InterruptedException e) {
             subsegment.addException(e);
+            LOGGER.error(e.getMessage(), e);
             return String.format("InterruptedException: %s", e.getMessage());
         } finally {
             subsegment.close();
