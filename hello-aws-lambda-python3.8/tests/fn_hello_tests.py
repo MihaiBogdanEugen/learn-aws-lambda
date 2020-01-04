@@ -1,7 +1,6 @@
 import unittest
 
 from app import fn_hello
-from app.fn_hello import SimpleException
 
 
 class TestProcessRequest(unittest.TestCase):
@@ -29,7 +28,7 @@ class TestProcessRequest(unittest.TestCase):
             "throw_error": True
         }
 
-        with self.assertRaises(SimpleException):
+        with self.assertRaises(Exception):
             fn_hello.process_request(event, "pip")
 
 

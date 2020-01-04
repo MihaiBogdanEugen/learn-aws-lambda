@@ -192,10 +192,10 @@ If your Lambda function code throws an exception, the AWS Lambda runtime recogni
 ```json
 {
   "errorMessage": "Sorry, but the caller wants to me to throw an error", 
-  "errorType": "SimpleException", 
+  "errorType": "Exception", 
   "stackTrace": [
     "  File \"/var/task/app/fn_hello.py\", line 31, in lambda_handler\n    return process_request(event, os.environ[\"PACKAGE_MANAGEMENT_SYSTEM\"])\n", 
-    "  File \"/var/task/app/fn_hello.py\", line 36, in process_request\n    raise SimpleException(\"Sorry, but the caller wants to me to throw an error\")\n"
+    "  File \"/var/task/app/fn_hello.py\", line 36, in process_request\n    raise Exception(\"Sorry, but the caller wants to me to throw an error\")\n"
   ]
 }
 ```

@@ -15,10 +15,6 @@ LOGGER.setLevel(logging.INFO)
 STATIC_RANDOM = random.random()
 
 
-class SimpleException(Exception):
-    pass
-
-
 def lambda_handler(event, context):
     LOGGER.info(get_runtime_info())
     LOGGER.info(get_public_ip())
@@ -33,7 +29,7 @@ def lambda_handler(event, context):
 
 def process_request(event, package_management_system):
     if event["throw_error"]:
-        raise SimpleException("Sorry, but the caller wants to me to throw an error")
+        raise Exception("Sorry, but the caller wants to me to throw an error")
 
     greeting = "Hello {} {}, this is a Python3.8 AWS Lambda function developed using {}!".format(
         event["first_name"], event["last_name"], package_management_system)
