@@ -1,4 +1,4 @@
-# AWS Lambda using Java with Python3.8 Runtime
+# AWS Lambda using Python with Python3.8 Runtime
 
 This is an *over-engineered* "hello world" style AWS Lambda created using Python3.8 showing: 
 - [deployment package](https://github.com/MihaiBogdanEugen/learn-aws-lambda/tree/master/hello-aws-lambda-python3.8#setup) prepared installing the dependencies into a dedicated folder and zipping it together with the sources

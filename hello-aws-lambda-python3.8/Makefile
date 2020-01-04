@@ -12,7 +12,7 @@ test:
 	python -m unittest tests/fn_hello_tests.py
 
 .PHONY: package
-## package: Install libraries in a new, project-local package directory with pip's --target option
+## package: Install libraries in a new, local temp directory with pip, and zip everything into a fat-zip
 package: clean test
 	pip install -t ./temp -r requirements.txt && \
 	cp -r app temp/ && \
