@@ -106,3 +106,9 @@ dist
 
 # Stores VSCode versions used for testing VSCode extensions
 .vscode-test
+
+# WebStorm
+.idea
+*.iml
+package/
+temp/
