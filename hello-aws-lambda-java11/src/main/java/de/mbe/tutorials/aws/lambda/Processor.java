@@ -45,7 +45,7 @@ public final class Processor {
     }
 
     public static String getPublicIP() {
-        final Subsegment subsegment = AWSXRay.beginSubsegment("getPublicIP");
+        final Subsegment subsegment = AWSXRay.beginSubsegment("checkip.amazonaws.com");
         subsegment.setNamespace(Namespace.REMOTE.toString());
 
         try {
