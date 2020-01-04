@@ -1,16 +1,16 @@
 # AWS Lambda using Java with Java11 Runtime
 
 This is an *over-engineered* "hello world" style AWS Lambda created using Java11 showing:
-- deployment package prepared using either [Gradle](https://github.com/MihaiBogdanEugen/learn-aws-lambda/tree/master/hello-aws-lambda-java11#gradle) or [Maven](https://github.com/MihaiBogdanEugen/learn-aws-lambda/tree/master/hello-aws-lambda-java11#maven)
-- handler function using either POJOs or Streams
-- execution context
-- function context
-- usage of reserved environment variables
-- usage of custom environment variables
-- separation of worker function for unit testing
-- logging using SLF4J and logback
-- error handling
-- tracing using AWS X-Ray
+- [deployment package](https://github.com/MihaiBogdanEugen/learn-aws-lambda/tree/master/hello-aws-lambda-java11#setup) prepared using either [Gradle](https://github.com/MihaiBogdanEugen/learn-aws-lambda/tree/master/hello-aws-lambda-java11#gradle) or [Maven](https://github.com/MihaiBogdanEugen/learn-aws-lambda/tree/master/hello-aws-lambda-java11#maven)
+- [handler function](https://github.com/MihaiBogdanEugen/learn-aws-lambda/tree/master/hello-aws-lambda-java11#handler) using either [POJOs](https://github.com/MihaiBogdanEugen/learn-aws-lambda/tree/master/hello-aws-lambda-java11#pojo-approach-based-on-implementing-the-requesthandler-interface) or [Streams](https://github.com/MihaiBogdanEugen/learn-aws-lambda/tree/master/hello-aws-lambda-java11#streams-approach-based-on-implementing-the-requeststreamhandler-interface)
+- [execution context](https://github.com/MihaiBogdanEugen/learn-aws-lambda/tree/master/hello-aws-lambda-java11#execution-context)
+- [function context](https://github.com/MihaiBogdanEugen/learn-aws-lambda/tree/master/hello-aws-lambda-java11#function-context)
+- [usage of reserved environment variables](https://github.com/MihaiBogdanEugen/learn-aws-lambda/tree/master/hello-aws-lambda-java11#reserved-environment-variables)
+- [usage of custom environment variables](https://github.com/MihaiBogdanEugen/learn-aws-lambda/tree/master/hello-aws-lambda-java11#custom-environment-variables)
+- [separation of worker function for unit testing](https://github.com/MihaiBogdanEugen/learn-aws-lambda/tree/master/hello-aws-lambda-java11#code-separation)
+- [logging](https://github.com/MihaiBogdanEugen/learn-aws-lambda/tree/master/hello-aws-lambda-java11#logging) using SLF4J and logback
+- [error handling](https://github.com/MihaiBogdanEugen/learn-aws-lambda/tree/master/hello-aws-lambda-java11#error-handling)
+- [tracing using AWS X-Ray](https://github.com/MihaiBogdanEugen/learn-aws-lambda/tree/master/hello-aws-lambda-java11#tracing)
 - useful AWS CLI commands for
   - [creating](https://github.com/MihaiBogdanEugen/learn-aws-lambda/tree/master/hello-aws-lambda-java11#create-function) AWS Lambda resources
   - [updating](https://github.com/MihaiBogdanEugen/learn-aws-lambda/tree/master/hello-aws-lambda-java11#update-function) AWS Lambda resources
@@ -20,8 +20,8 @@ This is an *over-engineered* "hello world" style AWS Lambda created using Java11
   - [deleting](https://github.com/MihaiBogdanEugen/learn-aws-lambda/tree/master/hello-aws-lambda-java11#delete-function) AWS Lambda resources
 
 ## Requirements
-- [AWS Command Line Interface](https://aws.amazon.com/cli/)
 - [Amazon Corretto JDK 11](https://docs.aws.amazon.com/corretto/latest/corretto-11-ug/downloads-list.html)
+- [AWS Command Line Interface](https://aws.amazon.com/cli/)
 - AWS_ROLE_ARN - AWS resource name of the role used for the Lambda function. At a bare minimum, the role must be equivalent with attaching the following AWS managed policies:
   - AWSLambdaBasicExecutionRole - provides limited write access to AWS CloudWatch Logs 
   - AWSXrayWriteOnlyAccess - provides limited read write access to AWS X-Ray
@@ -359,7 +359,7 @@ public class FnHello implements RequestHandler<Request, Response> {
 ```
 
 ### Function Context
-The [context](https://github.com/aws/aws-lambda-java-libs/blob/master/aws-lambda-java-core/src/main/java/com/amazonaws/services/lambda/runtime/Context.java) object provides access to the function's invocation context:
+The [context](https://docs.aws.amazon.com/lambda/latest/dg/java-context-object.html) object provides access to the function's invocation context:
 ```java
 public class FnHello implements RequestHandler<Request, Response> {
 
@@ -478,6 +478,7 @@ Apart from this, if your Lambda function code throws an exception, the AWS Lambd
 ```
 ### Tracing
 AWS Lambda functions can easily use X-Ray for tracing by importing the [com.amazonaws.aws-xray-recorder-sdk-core](https://github.com/aws/aws-xray-sdk-java/tree/master/aws-xray-recorder-sdk-aws-sdk-core) dependency into the function code - no other changes needed.
+
 For a more complex behaviour, one can use custom subsegments.
 
 - here is how to use the Subsegment Lambda Function to create a simple subsegment called `getRuntimeInfo`
