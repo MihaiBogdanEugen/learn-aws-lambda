@@ -1,23 +1,23 @@
 # AWS Lambda using Python with Python3.8 Runtime
 
 This is an *over-engineered* "hello world" style AWS Lambda created using Python3.8 showing: 
-- [deployment package](https://github.com/MihaiBogdanEugen/learn-aws-lambda/tree/master/hello-aws-lambda-python3.8#setup) prepared installing the dependencies into a dedicated folder and zipping it together with the sources
-- [handler function](https://github.com/MihaiBogdanEugen/learn-aws-lambda/tree/master/hello-aws-lambda-python3.8#handler) 
-- [execution context](https://github.com/MihaiBogdanEugen/learn-aws-lambda/tree/master/hello-aws-lambda-python3.8#execution-context)
-- [function context](https://github.com/MihaiBogdanEugen/learn-aws-lambda/tree/master/hello-aws-lambda-python3.8#function-context)
-- [usage of reserved environment variables](https://github.com/MihaiBogdanEugen/learn-aws-lambda/tree/master/hello-aws-lambda-python3.8#reserved-environment-variables)
-- [usage of custom environment variables](https://github.com/MihaiBogdanEugen/learn-aws-lambda/tree/master/hello-aws-lambda-python3.8#custom-environment-variables)
-- [separation of worker function for unit testing](https://github.com/MihaiBogdanEugen/learn-aws-lambda/tree/master/hello-aws-lambda-python3.8#code-separation)
-- [logging](https://github.com/MihaiBogdanEugen/learn-aws-lambda/tree/master/hello-aws-lambda-python3.8#logging)
-- [error handling](https://github.com/MihaiBogdanEugen/learn-aws-lambda/tree/master/hello-aws-lambda-python3.8#error-handling)
-- [tracing using AWS X-Ray](https://github.com/MihaiBogdanEugen/learn-aws-lambda/tree/master/hello-aws-lambda-python3.8#tracing)
+- [deployment package](#setup) prepared installing the dependencies into a dedicated folder and zipping it together with the sources
+- [handler function](#handler) 
+- [execution context](#execution-context)
+- [function context](#function-context)
+- [usage of reserved environment variables](#reserved-environment-variables)
+- [usage of custom environment variables](#custom-environment-variables)
+- [separation of worker function for unit testing](#code-separation)
+- [logging](#logging)
+- [error handling](#error-handling)
+- [tracing using AWS X-Ray](#tracing)
 - useful AWS CLI commands for
-  - [creating](https://github.com/MihaiBogdanEugen/learn-aws-lambda/tree/master/hello-aws-lambda-python3.8#create-function) AWS Lambda resources
-  - [updating](https://github.com/MihaiBogdanEugen/learn-aws-lambda/tree/master/hello-aws-lambda-python3.8#update-function) AWS Lambda resources
-  - [invoking](https://github.com/MihaiBogdanEugen/learn-aws-lambda/tree/master/hello-aws-lambda-python3.8#test-function) AWS Lambda resources
-  - [getting](https://github.com/MihaiBogdanEugen/learn-aws-lambda/tree/master/hello-aws-lambda-python3.8#get-function) AWS Lambda resources
-  - [listing](https://github.com/MihaiBogdanEugen/learn-aws-lambda/tree/master/hello-aws-lambda-python3.8#list-function) AWS Lambda resources
-  - [deleting](https://github.com/MihaiBogdanEugen/learn-aws-lambda/tree/master/hello-aws-lambda-python3.8#delete-function) AWS Lambda resources
+  - [creating](#create-function) AWS Lambda resources
+  - [updating](#update-function) AWS Lambda resources
+  - [invoking](#test-function) AWS Lambda resources
+  - [getting](#get-function) AWS Lambda resources
+  - [listing](#list-function) AWS Lambda resources
+  - [deleting](#delete-function) AWS Lambda resources
 
 ## Requirements
 - [Python 3.8.x](https://www.python.org/downloads/)

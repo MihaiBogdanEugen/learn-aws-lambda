@@ -1,23 +1,23 @@
 # AWS Lambda using Java with Java11 Runtime
 
 This is an *over-engineered* "hello world" style AWS Lambda created using Java11 showing:
-- [deployment package](https://github.com/MihaiBogdanEugen/learn-aws-lambda/tree/master/hello-aws-lambda-java11#setup) prepared using either [Gradle](https://github.com/MihaiBogdanEugen/learn-aws-lambda/tree/master/hello-aws-lambda-java11#gradle) or [Maven](https://github.com/MihaiBogdanEugen/learn-aws-lambda/tree/master/hello-aws-lambda-java11#maven)
-- [handler function](https://github.com/MihaiBogdanEugen/learn-aws-lambda/tree/master/hello-aws-lambda-java11#handler) using either [POJOs](https://github.com/MihaiBogdanEugen/learn-aws-lambda/tree/master/hello-aws-lambda-java11#pojo-approach-based-on-implementing-the-requesthandler-interface) or [Streams](https://github.com/MihaiBogdanEugen/learn-aws-lambda/tree/master/hello-aws-lambda-java11#streams-approach-based-on-implementing-the-requeststreamhandler-interface)
-- [execution context](https://github.com/MihaiBogdanEugen/learn-aws-lambda/tree/master/hello-aws-lambda-java11#execution-context)
-- [function context](https://github.com/MihaiBogdanEugen/learn-aws-lambda/tree/master/hello-aws-lambda-java11#function-context)
-- [usage of reserved environment variables](https://github.com/MihaiBogdanEugen/learn-aws-lambda/tree/master/hello-aws-lambda-java11#reserved-environment-variables)
-- [usage of custom environment variables](https://github.com/MihaiBogdanEugen/learn-aws-lambda/tree/master/hello-aws-lambda-java11#custom-environment-variables)
-- [separation of worker function for unit testing](https://github.com/MihaiBogdanEugen/learn-aws-lambda/tree/master/hello-aws-lambda-java11#code-separation)
-- [logging](https://github.com/MihaiBogdanEugen/learn-aws-lambda/tree/master/hello-aws-lambda-java11#logging) using SLF4J and logback
-- [error handling](https://github.com/MihaiBogdanEugen/learn-aws-lambda/tree/master/hello-aws-lambda-java11#error-handling)
-- [tracing using AWS X-Ray](https://github.com/MihaiBogdanEugen/learn-aws-lambda/tree/master/hello-aws-lambda-java11#tracing)
+- [deployment package](#setup) prepared using either [Gradle](#gradle) or [Maven](#maven)
+- [handler function](#handler) using either [POJOs](#pojo-approach-based-on-implementing-the-requesthandler-interface) or [Streams](#streams-approach-based-on-implementing-the-requeststreamhandler-interface)
+- [execution context](#execution-context)
+- [function context](#function-context)
+- [usage of reserved environment variables](#reserved-environment-variables)
+- [usage of custom environment variables](#custom-environment-variables)
+- [separation of worker function for unit testing](#code-separation)
+- [logging](#logging) using SLF4J and logback
+- [error handling](#error-handling)
+- [tracing using AWS X-Ray](#tracing)
 - useful AWS CLI commands for
-  - [creating](https://github.com/MihaiBogdanEugen/learn-aws-lambda/tree/master/hello-aws-lambda-java11#create-function) AWS Lambda resources
-  - [updating](https://github.com/MihaiBogdanEugen/learn-aws-lambda/tree/master/hello-aws-lambda-java11#update-function) AWS Lambda resources
-  - [invoking](https://github.com/MihaiBogdanEugen/learn-aws-lambda/tree/master/hello-aws-lambda-java11#test-function) AWS Lambda resources
-  - [getting](https://github.com/MihaiBogdanEugen/learn-aws-lambda/tree/master/hello-aws-lambda-java11#get-function) AWS Lambda resources
-  - [listing](https://github.com/MihaiBogdanEugen/learn-aws-lambda/tree/master/hello-aws-lambda-java11#list-function) AWS Lambda resources
-  - [deleting](https://github.com/MihaiBogdanEugen/learn-aws-lambda/tree/master/hello-aws-lambda-java11#delete-function) AWS Lambda resources
+  - [creating](#create-function) AWS Lambda resources
+  - [updating](#update-function) AWS Lambda resources
+  - [invoking](#test-function) AWS Lambda resources
+  - [getting](#get-function) AWS Lambda resources
+  - [listing](#list-function) AWS Lambda resources
+  - [deleting](#delete-function) AWS Lambda resources
 
 ## Requirements
 - [Amazon Corretto JDK 11](https://docs.aws.amazon.com/corretto/latest/corretto-11-ug/downloads-list.html)
@@ -109,8 +109,8 @@ make help
 
 ### Setup
 When it comes to the build automation system, there are 2 major options:
-- [Gradle](https://github.com/MihaiBogdanEugen/learn-aws-lambda/tree/master/hello-aws-lambda-java11#gradle) or 
-- [Maven](https://github.com/MihaiBogdanEugen/learn-aws-lambda/tree/master/hello-aws-lambda-java11#maven).
+- [Gradle](#gradle) or 
+- [Maven](#maven).
 
 Both of them being perfectly identical from the end result perspective. Nevertheless, any other build automation system capable of outputting a fat-jar can be used.
 
