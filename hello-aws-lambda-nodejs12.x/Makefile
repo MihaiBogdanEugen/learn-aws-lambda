@@ -8,7 +8,7 @@ clean:
 	rm -rf node_modules/
 
 .PHONY: install
-## install: Installs dependencies into the node_modules/ director
+## install: Installs dependencies into the node_modules/ directory
 install:
 	npm install
 

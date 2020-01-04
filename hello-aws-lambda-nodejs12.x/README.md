@@ -11,7 +11,7 @@ This is an *over-engineered* "hello world" style AWS Lambda created using Nodejs
 - [logging](#logging)
 - [error handling](#error-handling)
 - [tracing using AWS X-Ray](#tracing)
-- useful AWS CLI commands for
+- useful [AWS CLI commands for](https://docs.aws.amazon.com/cli/latest/reference/lambda/index.html#cli-aws-lambda):
   - [creating](#create-function) AWS Lambda resources
   - [updating](#update-function) AWS Lambda resources
   - [invoking](#test-function) AWS Lambda resources
@@ -210,6 +210,21 @@ If your Lambda function code throws an exception, the AWS Lambda runtime recogni
 ### Tracing
 AWS Lambda functions can easily use X-Ray for tracing by adding the [aws-xray-sdk](https://github.com/aws/aws-xray-sdk-node) library.
 
--tbd
+- For a more complex behaviour, one can use custom subsegments. Here is an example of adding such a subsegment using the decorator annotation:
+```javascript
+const AWSXRay = require('aws-xray-sdk-core')
+
+function getRuntimeInfo() {
+    return AWSXRay.captureFunc("getRuntimeInfo", function(){
+        return `node.js ${process.versions.node} v8 ${process.versions.v8}`
+    });
+}
+```
+- To instrument downstream calls, use the X-Ray SDK for Nodejs to patch the libraries that your application uses. The X-Ray SDK for Nodejs can patch anything on top of the `htttp` module as follows:
+
+```javascript
+const AWSXRay = require('aws-xray-sdk-core')
+AWSXRay.captureHTTPsGlobal(require('http'));
+``` 
 
 Don't forget, in AWS Lambda, you cannot modify the sampling rate. If your function is called by an instrumented service, calls that generated requests that were sampled by that service will be recorded by Lambda. If active tracing is enabled and no tracing header is present, Lambda makes the sampling decision.
