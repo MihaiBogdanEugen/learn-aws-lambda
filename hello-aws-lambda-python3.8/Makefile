@@ -4,11 +4,17 @@ FUNCTION_NAME?=hello-aws-lambda-python3_8
 ## clean: Clean the project-local libraries folder
 clean:
 	rm -rf temp/ &&\
-	rm -rf package/
+	rm -rf package/ &&\
+	rm -rf venv/
+
+.PHONY: install
+## install: Installs dependencies from requirements.txt
+install:
+	pip install -r requirements.txt
 
 .PHONY: test
 ## test: Run the tests
-test:
+test: install
 	python -m unittest tests/fn_hello_tests.py
 
 .PHONY: package

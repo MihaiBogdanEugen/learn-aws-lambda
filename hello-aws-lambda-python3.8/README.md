@@ -11,7 +11,7 @@ This is an *over-engineered* "hello world" style AWS Lambda created using Python
 - [logging](#logging)
 - [error handling](#error-handling)
 - [tracing using AWS X-Ray](#tracing)
-- useful AWS CLI commands for
+- useful [AWS CLI commands for](https://docs.aws.amazon.com/cli/latest/reference/lambda/index.html#cli-aws-lambda):
   - [creating](#create-function) AWS Lambda resources
   - [updating](#update-function) AWS Lambda resources
   - [invoking](#test-function) AWS Lambda resources
