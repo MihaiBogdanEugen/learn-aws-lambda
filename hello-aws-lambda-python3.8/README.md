@@ -18,6 +18,7 @@ This is an *over-engineered* "hello world" style AWS Lambda created using Python
   - [getting](https://github.com/MihaiBogdanEugen/learn-aws-lambda/tree/master/hello-aws-lambda-python3.8#get-function) AWS Lambda resources
   - [listing](https://github.com/MihaiBogdanEugen/learn-aws-lambda/tree/master/hello-aws-lambda-python3.8#list-function) AWS Lambda resources
   - [deleting](https://github.com/MihaiBogdanEugen/learn-aws-lambda/tree/master/hello-aws-lambda-python3.8#delete-function) AWS Lambda resources
+
 ## Requirements
 - [Python 3.8.x](https://www.python.org/downloads/)
 - [AWS Command Line Interface](https://aws.amazon.com/cli/)
@@ -29,12 +30,16 @@ This is an *over-engineered* "hello world" style AWS Lambda created using Python
 
 ### Test and Package the Function Code
 ```shell
+rm -rf temp/ &&\
 rm -rf package/ && \
-python -m unittest tests/fn_hello_tests.py && \
-pip install -t ./package -r requirements.txt && \
-cp -r app package/ && \
-cd package && \
-zip -r9 hello-aws-lambda-python3_8.zip .
+pip install -t ./temp -r requirements.txt && \
+cp -r app temp/ && \
+cd temp && \
+zip -r9 ${FUNCTION_NAME}.zip . && \
+cd .. &&\
+mkdir package &&\
+mv temp/${FUNCTION_NAME}.zip package/ && \
+rm -rf temp/
 ```
 The output package is a fat-zip located in the package folder:
 ```shell script
@@ -100,7 +105,7 @@ make help
 ## Walkthrough
 
 ### Setup
-The setup is based on using pip with a requirements file containing the dependencies:
+The setup is based on using pip with a `requirements.txt` file containing the dependencies:
 ```properties
 aws-xray-sdk==2.4.3
 requests==2.22.0
@@ -196,7 +201,7 @@ If your Lambda function code throws an exception, the AWS Lambda runtime recogni
 ```
 
 ### Tracing
-AWS Lambda functions can easily use X-Ray for tracing by adding the [aws-xray-sdk ](https://github.com/aws/aws-xray-sdk-python) library.
+AWS Lambda functions can easily use X-Ray for tracing by adding the [aws-xray-sdk](https://github.com/aws/aws-xray-sdk-python) library.
 
 - For a more complex behaviour, one can use custom subsegments. Here is an example of adding such a subsegment using the decorator annotation:
 ```python

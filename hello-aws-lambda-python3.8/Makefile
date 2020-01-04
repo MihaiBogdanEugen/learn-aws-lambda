@@ -3,7 +3,7 @@ FUNCTION_NAME?=hello-aws-lambda-python3_8
 .PHONY: clean
 ## clean: Clean the project-local libraries folder
 clean:
-	rm -rf temp/
+	rm -rf temp/ &&\
 	rm -rf package/
 
 .PHONY: test

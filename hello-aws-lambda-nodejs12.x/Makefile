@@ -3,8 +3,8 @@ FUNCTION_NAME?=hello-aws-lambda-nodejs12_x
 .PHONY: clean
 ## clean: Clean the project-local libraries folder
 clean:
-	rm -rf temp/
-	rm -rf package/
+	rm -rf temp/ &&\
+	rm -rf package/ &&\
 	rm -rf node_modules/
 
 .PHONY: install
