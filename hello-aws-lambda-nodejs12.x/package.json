@@ -4,7 +4,7 @@
     "description": "AWS Lambda using Python with Nodejs12.x Runtime",
     "main": "fnHello.js",
     "author": "Bogdan-Eugen Mihai",
-    "license": "MIT",
+    "license": "Apache-2.0",
     "dependencies": {
         "axios": "0.19.0",
         "pino": "5.15.0"
