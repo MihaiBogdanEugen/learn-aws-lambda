@@ -25,7 +25,7 @@ public final class Processor {
 
     public static Response processRequest(final Request request, final String buildAutomationSystem) {
         if (request.isThrowError()) {
-            throw new SimpleRuntimeException("Sorry, but the caller wants to me to throw an error");
+            throw new RuntimeException("Sorry, but the caller wants to me to throw an error");
         }
 
         final String greeting = String.format("Hello %s %s, this is a Java11 AWS Lambda function built using %s!",

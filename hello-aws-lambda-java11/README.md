@@ -465,7 +465,7 @@ Apart from this, if your Lambda function code throws an exception, the AWS Lambd
 ```json
 {
   "errorMessage":"Sorry, but the caller wants to me to throw an error",
-  "errorType":"de.mbe.tutorials.aws.lambda.SimpleRuntimeException",
+  "errorType":"java.lang.RuntimeException",
   "stackTrace":[
     "de.mbe.tutorials.aws.lambda.Processor.processRequest(Processor.java:28)",
     "de.mbe.tutorials.aws.lambda.FnHelloHandlerWithPOJOs.handleRequest(FnHelloHandlerWithPOJOs.java:36)",

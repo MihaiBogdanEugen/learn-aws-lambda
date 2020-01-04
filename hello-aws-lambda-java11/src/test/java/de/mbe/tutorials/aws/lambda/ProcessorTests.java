@@ -21,6 +21,6 @@ public class ProcessorTests {
     @Test
     void testProcessRequestThrowError() {
         final Request request = new Request("Bogdan-Eugen", "Mihai", 34, true);
-        assertThrows(SimpleRuntimeException.class, () -> processRequest(request, "anything but Apache Ant"));
+        assertThrows(RuntimeException.class, () -> processRequest(request, "anything but Apache Ant"));
     }
 }
