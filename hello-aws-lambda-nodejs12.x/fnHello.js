@@ -1,7 +1,10 @@
 const axios = require("axios")
-const pino = require("pino")
 
+const pino = require("pino")
 const LOGGER = pino({ level: process.env.LOG_LEVEL || "info" })
+
+const AWSXRay = require("aws-xray-sdk-core")
+AWSXRay.captureHTTPsGlobal(require("http"));
 
 const STATIC_RANDOM = Math.random()
 
@@ -36,7 +39,9 @@ function processRequest(event, packageManagementSystem) {
 }
 
 function getRuntimeInfo() {
-    return `node.js ${process.versions.node} v8 ${process.versions.v8}`
+    return AWSXRay.captureFunc("getRuntimeInfo", function(){
+        return `node.js ${process.versions.node} v8 ${process.versions.v8}`
+    });
 }
 
 async function getPublicIP() {
