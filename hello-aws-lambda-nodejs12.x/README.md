@@ -2,7 +2,7 @@
 
 This is an *over-engineered* "hello world" style AWS Lambda created using Nodejs12.x showing: 
 - [deployment package](#setup) prepared installing the dependencies into a dedicated folder and zipping it together with the sources
-- [handler function](#handler) 
+- [handler function](#handler) using either [async](#async) or [non-async](#non-async) functions
 - [execution context](#execution-context)
 - [function context](#function-context)
 - [usage of reserved environment variables](#reserved-environment-variables)
@@ -127,12 +127,25 @@ fnHello.js
 ```
 
 ### Handler
-The handler function is as simple as it can be:
+The handler function can be async or non-async.
+
+#### Async
+The handler async function is as simple as it can be:
 ```javascript
 exports.lambdaHandler = async (event, context) => {
 }
 ```
 The first argument (`event`) represent a dictionary based on the JSON-ified invocation input, while the second argument (`context`) represents the actual function context.
+
+#### Non-Async
+The handler non-async function has a third argument - `callback` used to send back a response:
+```javascript
+exports.lambdaHandler = function (event, context, callback) => {
+}
+```
+The callback function takes two arguments: an `error` and a `response`. When you call it, Lambda waits for the event loop to be empty and then returns the response or error to the invoker. The response object must be compatible with `JSON.stringify`.
+
+For non-async functions, function execution continues until the [event loop](https://nodejs.org/en/docs/guides/event-loop-timers-and-nexttick/) is empty or the function times out. The response isn't sent to the invoker until all event loop tasks are finished. If the function times out, an error is returned instead. You can configure the runtime to send the response immediately by setting `context.callbackWaitsForEmptyEventLoop` to false.
 
 ### Execution Context
 If one declares a variable outside the handler function, its value will not change during subsequent invocations, contrary to variables defined inside the handler functions, which will change every time the function is invoked:
