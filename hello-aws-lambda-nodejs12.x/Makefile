@@ -36,19 +36,33 @@ package: clean test
 check-updates:
 	npm outdated
 
-.PHONY: create-lambda
-## create-lambda: Create the Lambda function using the default POJOs aproach - must pass along `AWS_ROLE_ARN`
-create-lambda: check-aws-cli check-aws-role-arn package
+.PHONY: create-lambda-async
+## create-lambda-async: Create the Lambda function using the async handler - must pass along `AWS_ROLE_ARN`
+create-lambda-async: check-aws-cli check-aws-role-arn package
 	aws lambda create-function \
 		--function-name ${FUNCTION_NAME} \
     	--zip-file fileb://package/${FUNCTION_NAME}.zip \
 		--environment Variables={PACKAGE_MANAGEMENT_SYSTEM=npm} \
 		--role $(AWS_ROLE_ARN)  \
-		--handler fnHello.lambdaHandler \
+		--handler fnHello.asyncLambdaHandler \
 		--runtime nodejs12.x \
 		--timeout 30 \
 		--memory-size 256 \
 		--tracing-config Mode=Active
+
+.PHONY: create-lambda-sync
+## create-lambda-sync: Create the Lambda function using the sync handler - must pass along `AWS_ROLE_ARN`
+create-lambda-sync: check-aws-cli check-aws-role-arn package
+	aws lambda create-function \
+		--function-name ${FUNCTION_NAME} \
+    	--zip-file fileb://package/${FUNCTION_NAME}.zip \
+		--environment Variables={PACKAGE_MANAGEMENT_SYSTEM=npm} \
+		--role $(AWS_ROLE_ARN)  \
+		--handler fnHello.syncLambdaHandler \
+		--runtime nodejs12.x \
+		--timeout 30 \
+		--memory-size 256 \
+		--tracing-config Mode=Active		
 
 .PHONY: update-lambda
 ## update-lambda: Update the Lambda's function code
