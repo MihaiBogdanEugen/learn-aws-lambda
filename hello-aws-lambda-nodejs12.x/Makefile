@@ -37,7 +37,7 @@ check-updates:
 	npm outdated
 
 .PHONY: create-lambda
-## create-lambda: Create the Lambda function using the default POJOs aproach - must pass along `AWS_ACCOUNT_ID` and `AWS_ROLE`
+## create-lambda: Create the Lambda function using the default POJOs aproach - must pass along `AWS_ROLE_ARN`
 create-lambda: check-aws-cli check-aws-role-arn package
 	aws lambda create-function \
 		--function-name ${FUNCTION_NAME} \

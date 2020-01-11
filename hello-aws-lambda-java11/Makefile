@@ -42,7 +42,7 @@ else
 endif
 
 .PHONY: create-lambda
-## create-lambda: Create the Lambda function using the default POJOs aproach - must pass along `AWS_ACCOUNT_ID` and `AWS_ROLE`
+## create-lambda: Create the Lambda function using the default POJOs aproach - must pass along `AWS_ROLE_ARN`
 create-lambda: check-aws-cli check-aws-role-arn package
 ifeq ($(BUILD_AUTOMATION_SYSTEM), Maven)
 	aws lambda create-function \
@@ -69,7 +69,7 @@ else
 endif
 
 .PHONY: create-lambda-streams
-## create-lambda-streams: Create the Lambda function using the Streams aproach - must pass along `AWS_ACCOUNT_ID` and `AWS_ROLE`
+## create-lambda-streams: Create the Lambda function using the Streams aproach - must pass along `AWS_ROLE_ARN`
 create-lambda-streams: check-aws-cli check-aws-role-arn package
 ifeq ($(BUILD_AUTOMATION_SYSTEM), Maven)
 	aws lambda create-function \
