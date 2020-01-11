@@ -15,7 +15,7 @@ describe("processRequest works when throwError is false", function () {
         const response = app.exportedProcessRequest(event, "npm")
 
         expect(response).to.be.an("object");
-        expect(response.greeting).to.be.equal("Hello Bogdan-Eugen Mihai, this is a Nodejs12.x AWS Lambda function developed using npm!");
+        expect(response.greeting).to.be.equal("Hello Bogdan-Eugen Mihai, this is a Nodejs12.x AWS Lambda undefined function developed using npm!");
         expect(response.result).to.be.equal("Your age in hexadecimal is 22");
     });
 });

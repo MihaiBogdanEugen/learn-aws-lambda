@@ -8,7 +8,7 @@ AWSXRay.captureHTTPsGlobal(require("http"));
 
 const STATIC_RANDOM = Math.random()
 
-exports.lambdaHandler = async (event, context) => {
+exports.asyncLambdaHandler = async (event, context) => {
     LOGGER.info(getRuntimeInfo())
     LOGGER.info(await getPublicIP())
 
@@ -16,19 +16,29 @@ exports.lambdaHandler = async (event, context) => {
 
     LOGGER.info(`Static value: ${STATIC_RANDOM}, invocation value: ${Math.random()}`)
 
-    return processRequest(event, process.env.PACKAGE_MANAGEMENT_SYSTEM)
+    return processRequest(event, process.env.PACKAGE_MANAGEMENT_SYSTEM, "async")
+}
+
+exports.syncLambdaHandler = function(event, context, callback) {
+    LOGGER.info(getRuntimeInfo())
+
+    LOGGER.info(`${process.env.AWS_EXECUTION_ENV} called ${context.functionName} has ${context.getRemainingTimeInMillis() / 1000} seconds to live`)
+
+    LOGGER.info(`Static value: ${STATIC_RANDOM}, invocation value: ${Math.random()}`)
+
+    callback(null, processRequest(event, process.env.PACKAGE_MANAGEMENT_SYSTEM, "non-async"))
 }
 
 exports.exportedProcessRequest = (event, packageManagementSystem) => {
     return processRequest(event, packageManagementSystem)
 }
 
-function processRequest(event, packageManagementSystem) {
+function processRequest(event, packageManagementSystem, type) {
     if (event["throwError"]) {
         throw new Error("Sorry, but the caller wants to me to throw an error");
     }
 
-    const greeting = `Hello ${event["firstName"]} ${event["lastName"]}, this is a Nodejs12.x AWS Lambda function developed using ${packageManagementSystem}!`
+    const greeting = `Hello ${event["firstName"]} ${event["lastName"]}, this is a Nodejs12.x AWS Lambda ${type} function developed using ${packageManagementSystem}!`
 
     const result = `Your age in hexadecimal is ${parseInt(event["age"], 10).toString(16)}`;
 
