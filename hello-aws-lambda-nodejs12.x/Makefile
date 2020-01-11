@@ -51,7 +51,7 @@ create-lambda-async: check-aws-cli check-aws-role-arn package
 		--tracing-config Mode=Active
 
 .PHONY: create-lambda-sync
-## create-lambda-sync: Create the Lambda function using the sync handler - must pass along `AWS_ROLE_ARN`
+## create-lambda-sync: Create the Lambda function using the non-async handler - must pass along `AWS_ROLE_ARN`
 create-lambda-sync: check-aws-cli check-aws-role-arn package
 	aws lambda create-function \
 		--function-name ${FUNCTION_NAME} \
