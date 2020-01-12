@@ -1,0 +1,34 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: "hello-aws-lambda-nodejs12dotx"
+
+Resources:
+  ServerlessFn:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: s3://941312580222-lambda-src/hello-aws-lambda-nodejs12dotx.zip
+      Environment:
+        Variables:
+          PACKAGE_MANAGEMENT_SYSTEM: "npm"
+      Handler: fnHello.apiAsyncLambdaHandler
+      MemorySize: 256
+      Runtime: nodejs12.x
+      Timeout: 30
+      Tracing: Active
+      Events:
+        ServerlessProcessRequest:
+          Type: Api
+          Properties:
+            Path: /process
+            Method: post
+
+Outputs:
+  ServerlessFn:
+    Description: "Hello AWS Lambda Function ARN"
+    Value: !GetAtt ServerlessFn.Arn
+  ServerlessFnIamRole:
+    Description: "Implicit IAM Role created for Hello AWS Lambda Function"
+    Value: !GetAtt ServerlessFnRole.Arn
+  ServerlessProcessRequestApi:
+    Description: "API Gateway endpoint URL for Prod stage for Hello AWS Lambda Function"
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/process/"
