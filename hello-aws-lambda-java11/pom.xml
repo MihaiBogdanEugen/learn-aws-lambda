@@ -13,6 +13,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <aws-lambda-java-core.version>1.2.0</aws-lambda-java-core.version>
+        <aws-lambda-java-events.version>2.2.7</aws-lambda-java-events.version>
         <aws-xray-recorder-sdk-core.version>2.4.0</aws-xray-recorder-sdk-core.version>
         <jackson.version>2.10.1</jackson.version>
         <lambda-logging.version>1.0.3</lambda-logging.version>
@@ -37,6 +38,11 @@
             <groupId>com.amazonaws</groupId>
             <artifactId>aws-lambda-java-core</artifactId>
             <version>${aws-lambda-java-core.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.amazonaws</groupId>
+            <artifactId>aws-lambda-java-events</artifactId>
+            <version>${aws-lambda-java-events.version}</version>
         </dependency>
         <dependency>
             <groupId>com.amazonaws</groupId>
