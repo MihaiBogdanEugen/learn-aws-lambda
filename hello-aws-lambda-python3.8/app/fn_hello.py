@@ -1,3 +1,4 @@
+import json
 import logging
 import platform
 import os
@@ -13,6 +14,14 @@ LOGGER = logging.getLogger()
 LOGGER.setLevel(logging.INFO)
 
 STATIC_RANDOM = random.random()
+
+
+def api_lambda_handler(event, context):
+    request = json.loads(event["body"])
+    return {
+        "statusCode": 200,
+        "body": json.dumps(lambda_handler(request, context))
+    }
 
 
 def lambda_handler(event, context):
