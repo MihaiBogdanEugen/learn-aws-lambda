@@ -8,7 +8,17 @@ AWSXRay.captureHTTPsGlobal(require("http"));
 
 const STATIC_RANDOM = Math.random()
 
-exports.asyncLambdaHandler = async (event, context) => {
+exports.apiAsyncLambdaHandler = async (event, context) => {
+    request = JSON.parse(event["body"])
+    return {
+        "statusCode": 200,
+        "body": JSON.stringify(await internalAsyncLambdaHandler(request, context))
+    }
+}
+
+exports.asyncLambdaHandler = internalAsyncLambdaHandler
+
+async function internalAsyncLambdaHandler(event, context) {
     LOGGER.info(getRuntimeInfo())
     LOGGER.info(await getPublicIP())
 
@@ -17,6 +27,21 @@ exports.asyncLambdaHandler = async (event, context) => {
     LOGGER.info(`Static value: ${STATIC_RANDOM}, invocation value: ${Math.random()}`)
 
     return processRequest(event, process.env.PACKAGE_MANAGEMENT_SYSTEM, "async")
+}
+
+exports.apiSyncLambdaHandler = function(event, context, callback) {
+    request = JSON.parse(event["body"])
+
+    LOGGER.info(getRuntimeInfo())
+
+    LOGGER.info(`${process.env.AWS_EXECUTION_ENV} called ${context.functionName} has ${context.getRemainingTimeInMillis() / 1000} seconds to live`)
+
+    LOGGER.info(`Static value: ${STATIC_RANDOM}, invocation value: ${Math.random()}`)
+
+    callback(null, {
+        "statusCode": 200,
+        "body": JSON.stringify(processRequest(request, process.env.PACKAGE_MANAGEMENT_SYSTEM, "non-async"))
+    })
 }
 
 exports.syncLambdaHandler = function(event, context, callback) {
