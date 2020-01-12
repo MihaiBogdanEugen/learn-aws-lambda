@@ -142,7 +142,11 @@ list-lambda: check-aws-cli
 .PHONY: upload-package-to-s3
 ## upload-package-to-s3: Upload the package to a predefined S3 bucket
 upload-package-to-s3: package check-aws-cli check-lambda-src-bucket
+ifeq ($(BUILD_AUTOMATION_SYSTEM), Maven)
 	aws s3 cp target/${FUNCTION_NAME}.jar s3://${LAMBDA_SRC_BUCKET}/${FUNCTION_NAME}.jar
+else
+	aws s3 cp build/libs/${FUNCTION_NAME}.jar s3://${LAMBDA_SRC_BUCKET}/${FUNCTION_NAME}.jar
+endif
 
 .PHONY: validate-deployment
 ## validate-deployment: Validate the deployment AWS SAM template
