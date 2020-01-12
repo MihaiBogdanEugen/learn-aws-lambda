@@ -108,7 +108,7 @@ deploy: upload-package-to-s3 check-aws-sam check-lambda-src-bucket
 .PHONY: test-live
 ## test-live: Do a test against the PROD version of the API Gateway and Lambda function
 test-live: check-jq
-	curl --location --request POST $(shell aws cloudformation describe-stacks --stack-name hello-aws-lambda-python3dot8 | jq '.Stacks[0].Outputs[2].OutputValue') \
+	curl --location --request POST $(shell aws cloudformation describe-stacks --stack-name ${FUNCTION_NAME} | jq '.Stacks[0].Outputs[2].OutputValue') \
 		--header 'Content-Type: application/json' \
 		--data-raw '{ "first_name": "Bogdan-Eugen", "last_name": "Mihai", "age": 34, "throw_error": false }'
 
