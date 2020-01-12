@@ -1,0 +1,34 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: "hello-aws-lambda-python3dot8"
+
+Resources:
+  ServerlessFn:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: s3://941312580222-lambda-src/hello-aws-lambda-python3dot8.zip
+      Environment:
+        Variables:
+          PACKAGE_MANAGEMENT_SYSTEM: "pip"
+      Handler: app/fn_hello.api_lambda_handler
+      MemorySize: 256
+      Runtime: python3.8
+      Timeout: 30
+      Tracing: Active
+      Events:
+        ServerlessProcessRequest:
+          Type: Api
+          Properties:
+            Path: /process
+            Method: post
+
+Outputs:
+  ServerlessFn:
+    Description: "Hello AWS Lambda Function ARN"
+    Value: !GetAtt ServerlessFn.Arn
+  ServerlessFnIamRole:
+    Description: "Implicit IAM Role created for Hello AWS Lambda Function"
+    Value: !GetAtt ServerlessFnRole.Arn
+  ServerlessProcessRequestApi:
+    Description: "API Gateway endpoint URL for Prod stage for Hello AWS Lambda Function"
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/process/"
